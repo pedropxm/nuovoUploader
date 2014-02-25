@@ -1,4 +1,5 @@
 <?php
+error_reporting(E_ERROR | E_PARSE);
 require_once "google-api-php-client/src/Google_Client.php";
 require_once "google-api-php-client/src/contrib/Google_DriveService.php";
 require_once "google-api-php-client/src/contrib/Google_Oauth2Service.php";
@@ -140,6 +141,7 @@ if(isset($_FILES['file_upload'])){
     
     //set permission to public
     $result = insertPermission($service,$file->id, EMAIL_SHARE,'user','writer');
+    $result = insertPermission($service,$file->id, 'anyone','anyone','reader');
     if(isset($result)){
         $msg[0] = true;
         $msg[1] = 'Arquivo enviado com sucesso!';
@@ -174,7 +176,11 @@ if(isset($_FILES['file_upload'])){
         <?php
         if(isset($msg) && is_array($msg)){
             if($msg[0]){
-                echo '<div class="alert alert-success"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>'.$msg[1].'</div>';
+                echo '<div class="alert alert-success">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>'.$msg[1].'<p>
+                <a href="'.$file->alternateLink.' target="_blank">
+                    <img src="'.$file->iconLink.'"> Link para o arquivo
+                </a><p></div>';
             }else{
                 echo '<div class="alert alert-danger"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>'.$msg[1].'</div>';
             }
